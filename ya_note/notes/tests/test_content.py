@@ -19,9 +19,6 @@ class TestContent(TestCase):
         )
 
     def test_notes_list_for_different_users(self):
-        """Выполняються 1 и 2 пункты задания. Передача заметки, в списке
-        object_list, в context. Проверка пересечения
-        записей 2х пользователей"""
         users_notes = (
             (self.author, True),
             (self.reader, False),
