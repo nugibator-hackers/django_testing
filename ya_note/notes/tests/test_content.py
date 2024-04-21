@@ -13,7 +13,6 @@ class TestContent(CommonTestData):
         super().setUpTestData()
         cls.author_client = Client()
         cls.author_client.force_login(cls.author)
-        cls.reader = User.objects.create(username='Йошимура')
         cls.reader_client = Client()
         cls.reader_client.force_login(cls.reader)
 
