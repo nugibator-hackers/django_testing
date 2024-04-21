@@ -1,8 +1,12 @@
 from datetime import datetime, timedelta
 
 import pytest
+
+from django.urls import reverse
 from django.conf import settings
 from django.utils import timezone
+from django.test import Client
+
 from news.models import News, Comment
 
 
@@ -12,7 +16,8 @@ def author(django_user_model):
 
 
 @pytest.fixture
-def author_client(author, client):
+def author_client(author):
+    client = Client()
     client.force_login(author)
     return client
 
@@ -27,11 +32,6 @@ def news():
 
 
 @pytest.fixture
-def pk_from_news(news):
-    return news.pk,
-
-
-@pytest.fixture
 def comment(author, news):
     comment = Comment.objects.create(
         news=news,
@@ -39,18 +39,6 @@ def comment(author, news):
         text='Текст комментария'
     )
     return comment
-
-
-@pytest.fixture
-def pk_from_comment(comment):
-    return comment.pk,
-
-
-@pytest.fixture
-def form_data():
-    return {
-        'text': 'Новый текст комментария'
-    }
 
 
 @pytest.fixture
@@ -75,3 +63,43 @@ def make_bulk_of_comments(news, author):
         )
         comment.created = now + timedelta(days=index)
         comment.save()
+
+
+@pytest.fixture
+def url_news_home():
+    return reverse('news:home')
+
+
+@pytest.fixture
+def url_home():
+    return reverse('news:home')
+
+
+@pytest.fixture
+def url_detail(news):
+    return reverse('news:detail', args=(news.id,))
+
+
+@pytest.fixture
+def url_edit(comment):
+    return reverse('news:edit', args=(comment.id,))
+
+
+@pytest.fixture
+def url_delete(comment):
+    return reverse('news:delete', args=(comment.id,))
+
+
+@pytest.fixture
+def url_login():
+    return reverse('users:login')
+
+
+@pytest.fixture
+def url_logout():
+    return reverse('users:logout')
+
+
+@pytest.fixture
+def url_signup():
+    return reverse('users:signup')
