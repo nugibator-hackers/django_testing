@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, get_user
 
 from notes.tests.common_test import CommonTestData
 
@@ -8,11 +8,6 @@ User = get_user_model()
 
 
 class TestRoutes(CommonTestData):
-
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-
     def test_pages_availability_for_anonymous_user(self):
         urls = (
             self.home_url,
@@ -31,27 +26,25 @@ class TestRoutes(CommonTestData):
             self.list_url,
             self.success_url,
         )
-        self.client.force_login(self.author)
         for url in urls:
             with self.subTest(url=url):
-                response = self.client.get(url)
+                response = self.author_client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_availability_for_notes_create_edit_and_delete(self):
-        user_statuses = (
-            (self.author, HTTPStatus.OK),
-            (self.reader, HTTPStatus.NOT_FOUND),
+        client_statuses = (
+            (self.author_client, HTTPStatus.OK),
+            (self.reader_client, HTTPStatus.NOT_FOUND),
         )
         urls = (
             self.detail_url,
             self.edit_url,
             self.delete_url
         )
-        for user, status in user_statuses:
-            self.client.force_login(user)
+        for client, status in client_statuses:
             for url in urls:
-                with self.subTest(user=user.username, url=url):
-                    response = self.client.get(url)
+                with self.subTest(user=get_user(client).username, url=url):
+                    response = client.get(url)
                     self.assertEqual(response.status_code, status)
 
     def test_redirect_for_anonymous_client(self):

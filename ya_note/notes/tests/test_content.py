@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.test import Client
 
 from notes.forms import NoteForm
 from notes.tests.common_test import CommonTestData
@@ -11,10 +10,6 @@ class TestContent(CommonTestData):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.author_client = Client()
-        cls.author_client.force_login(cls.author)
-        cls.reader_client = Client()
-        cls.reader_client.force_login(cls.reader)
 
     def test_notes_list_for_different_users(self):
         users_notes = (

@@ -2,7 +2,6 @@ from http import HTTPStatus
 from random import choice
 
 import pytest
-
 from pytest_django.asserts import assertFormError, assertRedirects
 
 
@@ -45,11 +44,11 @@ def test_user_can_create_comment(
 
 
 def test_user_cant_use_bad_words(admin_client, url_detail):
+    expected_comments = Comment.objects.count()
     bad_words_data = {'text': f'Сейчас будем ругаться, {choice(BAD_WORDS)}'}
     response = admin_client.post(url_detail, data=bad_words_data)
     assertFormError(response, form='form', field='text', errors=WARNING)
     comments_count = Comment.objects.count()
-    expected_comments = 0
     assert comments_count == expected_comments
 
 
@@ -78,11 +77,11 @@ def test_author_can_delete_comment(
         url_delete,
         url_detail
 ):
+    expected_comments = Comment.objects.count() - ADDED_COMMENT
     response = author_client.post(url_delete)
     expected_url = url_detail + '#comments'
     assertRedirects(response, expected_url)
     comments_count = Comment.objects.count()
-    expected_comments = 0
     assert comments_count == expected_comments, (
         f'Комментариев было создано {comments_count}, '
         f'а должно было {expected_comments}'
@@ -96,7 +95,10 @@ def test_other_user_cant_edit_comment(
 ):
     response = admin_client.post(url_edit, data={'text': FORM_DATA})
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert comment == Comment.objects.get(), (
+    getted_comment = Comment.objects.get(id=comment.id)
+    assert comment.news == getted_comment.news
+    assert comment.author == getted_comment.author
+    assert comment.text == getted_comment.text, (
         f'Комментарий "{comment.text}" был обновлен, '
         f'хотя не должен был.'
         f'Ожидался не редактированный комментарий "{comment.text}"'
@@ -107,10 +109,10 @@ def test_other_user_cant_delete_comment(
     admin_client,
     url_delete
 ):
+    expected_comments = Comment.objects.count()
     response = admin_client.post(url_delete)
     assert response.status_code == HTTPStatus.NOT_FOUND
     comments_count = Comment.objects.count()
-    expected_comments = 1
     assert comments_count == expected_comments, (
         f'Было создано {comments_count} комментариев, '
         f'а должно было {expected_comments}'
