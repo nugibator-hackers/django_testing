@@ -4,7 +4,6 @@ from random import choice
 import pytest
 from pytest_django.asserts import assertFormError, assertRedirects
 
-
 from news.forms import BAD_WORDS, WARNING
 from news.models import Comment
 
@@ -100,7 +99,7 @@ def test_other_user_cant_edit_comment(
     assert comment.author == getted_comment.author
     assert comment.text == getted_comment.text, (
         f'Комментарий "{comment.text}" был обновлен, '
-        f'хотя не должен был.'
+        'хотя не должен был.'
         f'Ожидался не редактированный комментарий "{comment.text}"'
     )
 

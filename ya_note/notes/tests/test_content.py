@@ -7,9 +7,6 @@ User = get_user_model()
 
 
 class TestContent(CommonTestData):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
 
     def test_notes_list_for_different_users(self):
         users_notes = (

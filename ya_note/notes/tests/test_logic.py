@@ -1,8 +1,7 @@
 from http import HTTPStatus
 
-from pytils.translit import slugify
-
 from django.contrib.auth import get_user_model
+from pytils.translit import slugify
 
 from notes.forms import WARNING
 from notes.models import Note
@@ -15,10 +14,6 @@ ADDED_POST = 1
 
 
 class TestNoteCreation(CommonTestData):
-
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
 
     def test_user_can_create_note(self):
         expected_notes_count = Note.objects.count() + ADDED_POST
@@ -67,9 +62,6 @@ class TestNoteCreation(CommonTestData):
 
 
 class TestNoteEditDelete(CommonTestData):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
 
     def test_author_can_edit_note(self):
         self.author_client.post(self.edit_url, self.updated_form_data)

@@ -20,11 +20,11 @@ def test_news_count(client, url_news_home):
 @pytest.mark.usefixtures('make_bulk_of_news')
 def test_news_order(client, url_news_home):
     response = client.get(url_news_home)
-    test_object = response.context['object_list']
-    sorted_list_of_news = sorted(test_object,
+    news_object = response.context['object_list']
+    sorted_list_of_news = sorted(news_object,
                                  key=lambda news: news.date,
                                  reverse=True)
-    for as_is, to_be in zip(test_object, sorted_list_of_news):
+    for as_is, to_be in zip(news_object, sorted_list_of_news):
         assert as_is.date == to_be.date, (
             'Первая новость в списке '
             f'должна быть "{to_be.title}",'
@@ -38,10 +38,10 @@ def test_news_order(client, url_news_home):
 @pytest.mark.usefixtures('make_bulk_of_comments')
 def test_comments_order(client, url_detail):
     response = client.get(url_detail)
-    test_object = response.context['news'].comment_set.all()
-    sorted_list_of_comments = sorted(test_object,
+    comment_object = response.context['news'].comment_set.all()
+    sorted_list_of_comments = sorted(comment_object,
                                      key=lambda comment: comment.created)
-    for as_is, to_be in zip(test_object, sorted_list_of_comments):
+    for as_is, to_be in zip(comment_object, sorted_list_of_comments):
         msg = (
             f'Первым комментарием в списке должен быть "{to_be.text}" '
             f'от {to_be.created}. Сейчас "{as_is.text}" {as_is.created}'
